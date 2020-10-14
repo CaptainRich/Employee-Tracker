@@ -8,10 +8,10 @@ VALUES
 
 INSERT INTO role (title, salary, department_id)
 VALUES
-('Project Engineer', 70000, 1),
-('Sales account rep', 50000, 2),
-('Manager Eng', 90000, 1)
-('Manager Sales', 75000, 2);
+('Project_Engineer', 70000.00, 1),
+('Sales_account_rep', 50000.00, 2),
+('Manager_Eng', 90000.00, 1),
+('Manager_Sales', 75000.00, 2);
 
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
