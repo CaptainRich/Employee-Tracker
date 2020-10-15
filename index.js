@@ -2,8 +2,12 @@
 
 // Reference/import the other packages and modules needed
 const inquirer    = require( 'inquirer' );
+const express     = require( 'express' );
+const mysql       = require( 'mysql2' );
 
-
+// Import the 'api' routes for this application from our subdirectories
+const { getRoles, getDepartments, getEmployees, addDepartment, addRole, addEmployee, updateRole } = 
+      require('./routes/apiRoutes/index');
 
 
 
@@ -30,22 +34,88 @@ const getAction = () => {
 
             // View all the departments
             if( selected === 1) {
-                //viewAllDepartments();
+                
                 console.log('Here are all the departments');
+                getDepartments();
                 return getAction();
             };
 
 
             // View all the roles
             if( selected === 2) {
-                //viewAllRoles();
+                
                 console.log('Here are all the employee roles');
+                getRoles();
                 return getAction();
             };
+            
+
+            // View all the employees
+            if( selected === 3) {
+                
+                console.log('Here are all the employees');
+                getEmployees();
+                return getAction();
+            };
+            
+
+            // Add a new department
+            if( selected === 4) {
+                
+                console.log('Adding a new department');
+                addDepartment();
+                return getAction();
+            };
+                        
+
+            // Add a new role
+            if( selected === 5) {
+                
+                console.log('Adding a new role');
+                addRole();
+                return getAction();
+            };
+                                    
+
+            // Add a new employee
+            if( selected === 6) {
+                
+                console.log('Adding a new employee');
+                addEmployee();
+                return getAction();
+            };
+                                                
+
+            // Update an employee role
+            if( selected === 7) {
+                
+                console.log('Updating an employee role');
+                updateRole();
+                return getAction();
+            };
+
         });            
-        });
+
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Setup the connection to the database
 
+// var con = mysql.createConnection( {
+//     host: "localhost",
+//     user: "Rich_",
+//     password: "Learning_2020"
+// });
+
+// con.connect( function(err) {
+//     if( err ) throw err;
+//     console.log( "Connected to MySQL database." );
+// });
+
+
+
+// Use our routing routines
+const app = express();
+app.use( express.urlencoded( { extend: true } ) );
 
 getAction();
