@@ -2,7 +2,7 @@
 // Import the required modules
 const express = require('express');
 const router  = express.Router();
-const db      = require('../../db/staff_db.db');
+const db      = require('../../db/staff_db');
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Define the routes for the employee roles.

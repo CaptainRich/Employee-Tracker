@@ -34,6 +34,15 @@ const getAction = () => {
                 console.log('Here are all the departments');
                 return getAction();
             };
+
+
+            // View all the roles
+            if( selected === 2) {
+                //viewAllRoles();
+                console.log('Here are all the employee roles');
+                return getAction();
+            };
+        });            
         });
 };
 
