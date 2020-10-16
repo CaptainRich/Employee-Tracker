@@ -45,12 +45,17 @@ var updateRole = function() {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to obtain all of the company departments.
-var getDepartments = function() {
+ getDepartments = () => {
 
-    return $.ajax( {
-        url: "/api/department",
-        method: 'GET'
-    });
+    console.log('Here are all the departments');
+
+    const query = connection.query(
+        'SELECT * FROM department', function( err, res ) {
+            if( err ) throw err;                               // abort on a failure
+            console.table( res );
+        }
+    
+    );
 };
 
 //////////////////////////////////////////////////////////////////////////////

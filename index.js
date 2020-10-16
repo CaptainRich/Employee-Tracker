@@ -2,120 +2,240 @@
 
 // Reference/import the other packages and modules needed
 const inquirer    = require( 'inquirer' );
-const express     = require( 'express' );
 const mysql       = require( 'mysql2' );
 
+
 // Import the 'api' routes for this application from our subdirectories
-const { getRoles, getDepartments, getEmployees, addDepartment, addRole, addEmployee, updateRole } = 
-      require('./routes/apiRoutes/index');
+//const { getRoles, getDepartments, getEmployees, addDepartment, addRole, addEmployee, updateRole } = 
+//      require('./routes/apiRoutes/index');
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Setup the connection to the database, and if successful invoke the Main Menu.
+
+const connection = mysql.createConnection({
+            host: "localhost",
+            port: 3306,
+            user: "root",
+            password: "Learning_2020",
+            database: "staff_db"
+});
+
+connection.connect( function(err) {
+    if( err ) throw err;              // abort on connection error
+
+    // Report the connection status and invoke the Main Menu to allow actions on the database.
+    console.log( "Connected to MySQL database with ID: " + connection.threadId + "\n" );
+    connection.setMaxListeners(100);
+    mainMenu();
+});
 
 ///////////////////////////////////////////////////////////////////////////////////////
-// On startup, get the desired action.  This needs to be a recursive action since 
+// The Main Menu obtains the desired action.  This is recursive  since 
 // control will always return here.
 
-const getAction = () => {
+function mainMenu()  {
 
-    return inquirer.prompt([
-        {   // Prompt the business owner for the next action
+    inquirer.prompt([
+        {   // Prompt the business owner for the next desired action
             type: 'list',
-            name: 'action',
+            name: 'pick',
             message: 'Select the desired action, or Finish?',
-            choices: ['1: View All Departments', '2: View All Roles', '3: View All Employees', '4 Add a Department', '5 Add a Role', '6 Add an Employee', '7 Update an Employee Role', '8 Finish']
+            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Finish']
         }
     ])
-        .then(({ action }) => {
+        .then( response  => {
             // Get the selected action
-            const selection = action.split(': ');
-            const selected = parseInt(selection[0].trim());
-            console.log('Selected action is: ' + selected);
+            //const selection = action.split(': ');
+            //const selected = parseInt(selection[0].trim());
+            console.log('\nSelected action is: ' + response.pick + '\n');
 
+            switch (response.pick) {
 
-            // View all the departments
-            if( selected === 1) {
-                
-                console.log('Here are all the departments');
-                getDepartments();
-                return getAction();
-            };
+                case "View All Departments":
+                    getDepartments();
+                    //mainMenu();
 
+                case "View All Roles":
+                    getRoles();
+                    //mainMenu();
+                    
+                case "View All Employees":
+                    getEmployees();
+                    //mainMenu();
+                                        
+                case "Add a Department":
+                    addDepartment();
+                    mainMenu();
+                                                            
+                case "Add a Role":
+                    addRole();
+                    mainMenu();
+                                                                                
+                case "Add an Employee":
+                    addEmployee();
+                    mainMenu();
+                                                                                                    
+                case "Update an Employee Role":
+                    updateRole();
+                    mainMenu();
 
-            // View all the roles
-            if( selected === 2) {
-                
-                console.log('Here are all the employee roles');
-                getRoles();
-                return getAction();
-            };
-            
+                case "Finish":
+                    connection.end();
+                    break;
 
-            // View all the employees
-            if( selected === 3) {
-                
-                console.log('Here are all the employees');
-                getEmployees();
-                return getAction();
-            };
-            
-
-            // Add a new department
-            if( selected === 4) {
-                
-                console.log('Adding a new department');
-                addDepartment();
-                return getAction();
-            };
-                        
-
-            // Add a new role
-            if( selected === 5) {
-                
-                console.log('Adding a new role');
-                addRole();
-                return getAction();
-            };
-                                    
-
-            // Add a new employee
-            if( selected === 6) {
-                
-                console.log('Adding a new employee');
-                addEmployee();
-                return getAction();
-            };
-                                                
-
-            // Update an employee role
-            if( selected === 7) {
-                
-                console.log('Updating an employee role');
-                updateRole();
-                return getAction();
+                default:
+                    mainMenu();
             };
 
         });            
 
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// Setup the connection to the database
 
-// var con = mysql.createConnection( {
-//     host: "localhost",
-//     user: "Rich_",
-//     password: "Learning_2020"
-// });
+//////////////////////////////////////////////////////////////////////////////
+// Routine to obtain all of the company departments.
+getDepartments = () => {
 
-// con.connect( function(err) {
-//     if( err ) throw err;
-//     console.log( "Connected to MySQL database." );
-// });
+    console.log('Here are all the departments');
+
+    const query = connection.query(
+        'SELECT * FROM department', function( err, res ) {
+            if( err ) throw err;                               // abort on a failure
+            console.table( res );
+            mainMenu();
+        }
+    
+    );
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Routine to obtain all of the company's employee roles.
+getRoles = () => {
+
+    console.log('Here are all the employee roles');
+
+    const query = connection.query(
+        'SELECT * FROM role', function( err, res ) {
+            if( err ) throw err;                               // abort on a failure
+            console.table( res );
+            mainMenu();
+        }
+    
+    );
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Routine to obtain all of the company's employees.
+getEmployees = () => {
+
+    console.log('Here are all the employees');
+
+    const query = connection.query(
+        'SELECT * FROM employee', function( err, res ) {
+            if( err ) throw err;                               // abort on a failure
+            console.table( res );
+            mainMenu();
+        }
+    
+    );
+};
 
 
 
-// Use our routing routines
-const app = express();
-app.use( express.urlencoded( { extend: true } ) );
+//////////////////////////////////////////////////////////////////////////////
+// Routine to add a enw company department.
+addDepartment = () => {
 
-getAction();
+    console.log('Adding a new department');
+    inquirer.prompt( [
+        {
+            name: "deptName:",
+            message: "What is the new department name?",
+            type: "input"
+        }
+    ])
+    .then( ({deptName}) => {
+        const query = connection.query(
+            'INSERT INTO department SET ?', [{deptName}],                    
+            function( err, res ) {
+                if( err ) throw err;                      // abort on a failure
+                console.table( res );
+            }
+        );
+    })
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Routine to add a new employee role.
+addRole = () => {
+
+    console.log('Adding a new role');
+    inquirer.prompt( [
+        {
+            name: "deptName:",
+            message: "What is the new role name?",
+            type: "input"
+        }
+    ])
+    .then( ({deptName}) => {
+        const query = connection.query(
+            'INSERT INTO role SET ?', [{deptName}],                    
+            function( err, res ) {
+                if( err ) throw err;                      // abort on a failure
+                console.table( res );
+            }
+        );
+    })
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Routine to add a new employee.
+addEmployee = () => {
+
+    console.log('Adding a new employee');
+    inquirer.prompt( [
+        {
+            name: "deptName:",
+            message: "What is the new employee name?",
+            type: "input"
+        }
+    ])
+    .then( ({deptName}) => {
+        const query = connection.query(
+            'INSERT INTO employee SET ?', [{deptName}],                    
+            function( err, res ) {
+                if( err ) throw err;                      // abort on a failure
+                console.table( res );
+            }
+        );
+    })
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Routine to update an employee role.
+updateRole = () => {
+
+    console.log('Updating an employee role');
+    inquirer.prompt( [
+        {
+            name: "deptName:",
+            message: "What is the employee name?",
+            type: "input"
+        }
+    ])
+    .then( ({deptName}) => {
+        const query = connection.query(
+            'INSERT INTO employee SET ?', [{deptName}],                    
+            function( err, res ) {
+                if( err ) throw err;                      // abort on a failure
+                console.table( res );
+            }
+        );
+    })
+};
