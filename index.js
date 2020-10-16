@@ -54,31 +54,31 @@ function mainMenu()  {
 
                 case "View All Departments":
                     getDepartments();
-                    //mainMenu();
+                    break;
 
                 case "View All Roles":
                     getRoles();
-                    //mainMenu();
+                    break;
                     
                 case "View All Employees":
                     getEmployees();
-                    //mainMenu();
+                    break;
                                         
                 case "Add a Department":
                     addDepartment();
-                    mainMenu();
+                    break;
                                                             
                 case "Add a Role":
                     addRole();
-                    mainMenu();
+                    break;
                                                                                 
                 case "Add an Employee":
                     addEmployee();
-                    mainMenu();
+                    break;
                                                                                                     
                 case "Update an Employee Role":
                     updateRole();
-                    mainMenu();
+                    break;
 
                 case "Finish":
                     connection.end();
@@ -87,20 +87,18 @@ function mainMenu()  {
                 default:
                     mainMenu();
             };
-
         });            
-
 };
 
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to obtain all of the company departments.
-getDepartments = () => {
+function getDepartments() {
 
     console.log('Here are all the departments');
 
-    const query = connection.query(
-        'SELECT * FROM department', function( err, res ) {
+    connection.query(
+        'SELECT * FROM department', ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );
             mainMenu();
@@ -112,12 +110,12 @@ getDepartments = () => {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to obtain all of the company's employee roles.
-getRoles = () => {
+function getRoles() {
 
     console.log('Here are all the employee roles');
 
-    const query = connection.query(
-        'SELECT * FROM role', function( err, res ) {
+    connection.query(
+        'SELECT * FROM role', ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );
             mainMenu();
@@ -129,12 +127,12 @@ getRoles = () => {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to obtain all of the company's employees.
-getEmployees = () => {
+function getEmployees() {
 
     console.log('Here are all the employees');
 
-    const query = connection.query(
-        'SELECT * FROM employee', function( err, res ) {
+    connection.query(
+        'SELECT * FROM employee', ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );
             mainMenu();
@@ -147,7 +145,7 @@ getEmployees = () => {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to add a enw company department.
-addDepartment = () => {
+function addDepartment() {
 
     console.log('Adding a new department');
     inquirer.prompt( [
@@ -158,11 +156,12 @@ addDepartment = () => {
         }
     ])
     .then( ({deptName}) => {
-        const query = connection.query(
+        connection.query(
             'INSERT INTO department SET ?', [{deptName}],                    
-            function( err, res ) {
+            ( err, res ) => {
                 if( err ) throw err;                      // abort on a failure
                 console.table( res );
+                mainMenu();
             }
         );
     })
@@ -171,22 +170,23 @@ addDepartment = () => {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to add a new employee role.
-addRole = () => {
+function addRole() {
 
     console.log('Adding a new role');
     inquirer.prompt( [
         {
-            name: "deptName:",
+            name: "roleName:",
             message: "What is the new role name?",
             type: "input"
         }
     ])
-    .then( ({deptName}) => {
-        const query = connection.query(
-            'INSERT INTO role SET ?', [{deptName}],                    
-            function( err, res ) {
+    .then( ({roleName}) => {
+        connection.query(
+            'INSERT INTO role SET ?', [{roleName}],                    
+            ( err, res ) => {
                 if( err ) throw err;                      // abort on a failure
                 console.table( res );
+                mainMenu();
             }
         );
     })
@@ -195,7 +195,7 @@ addRole = () => {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to add a new employee.
-addEmployee = () => {
+function addEmployee() {
 
     console.log('Adding a new employee');
     inquirer.prompt( [
@@ -206,11 +206,12 @@ addEmployee = () => {
         }
     ])
     .then( ({deptName}) => {
-        const query = connection.query(
+        connection.query(
             'INSERT INTO employee SET ?', [{deptName}],                    
-            function( err, res ) {
+            ( err, res ) => {
                 if( err ) throw err;                      // abort on a failure
                 console.table( res );
+                mainMenu();
             }
         );
     })
@@ -219,7 +220,7 @@ addEmployee = () => {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to update an employee role.
-updateRole = () => {
+function updateRole() {
 
     console.log('Updating an employee role');
     inquirer.prompt( [
@@ -230,11 +231,12 @@ updateRole = () => {
         }
     ])
     .then( ({deptName}) => {
-        const query = connection.query(
+        connection.query(
             'INSERT INTO employee SET ?', [{deptName}],                    
-            function( err, res ) {
+            ( err, res ) => {
                 if( err ) throw err;                      // abort on a failure
                 console.table( res );
+                mainMenu();
             }
         );
     })
