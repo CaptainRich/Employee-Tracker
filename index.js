@@ -139,7 +139,7 @@ function getEmployees() {
 
 
     connection.query(
-        'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, employee.manager_id FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id', 
+        'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, managers.manager_name FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id INNER JOIN managers ON employee.manager_id=managers.id', 
         ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );

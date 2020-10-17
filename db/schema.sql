@@ -30,3 +30,10 @@ CREATE TABLE department (
   department_name VARCHAR(30) NOT NULL,
   PRIMARY KEY (id) 
 );
+
+/* Define the manager table */
+CREATE TABLE managers (
+  id INTEGER(11) AUTO_INCREMENT NOT NULL,
+  manager_name VARCHAR(30) NOT NULL,
+  PRIMARY KEY (id) 
+);
