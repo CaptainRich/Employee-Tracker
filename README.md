@@ -36,7 +36,6 @@ Given a command-line application that accepts user input
 ## Technologies Used
 * The NPM package inquirer.
 * The NPM package mysql2.
-* The NPM package console.table.
 
 ## Note-Taker Logic
 

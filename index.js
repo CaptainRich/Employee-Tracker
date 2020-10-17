@@ -155,7 +155,7 @@ function addDepartment() {
         console.log( response );
         let name = response;
         createDepartment (name)
-        .then( console.log("department added") )
+        .then( console.log("Department added") )
         .then( ()=> mainMenu() );
 
     })
@@ -176,22 +176,67 @@ function addRole() {
     console.log('Adding a new role');
     inquirer.prompt( [
         {
-            name: "roleName:",
+            name: "title",
             message: "What is the new role name?",
-            type: "input"
+            type: "text",
+            validate: titleNameInput => {
+                if (titleNameInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the role name!");
+                    return false;
+                }
+            }
+        },
+        {
+            name: "salary",
+            message: "What is the salary for this role?",
+            type: "text" ,
+            validate: salaryInput => {
+                if (salaryInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the salary for this role!");
+                    return false;
+                }
+            }
+        },
+        {
+            name: "department_id",
+            message: "What is the department role?",
+            type: "text" ,
+            validate: department_idInput => {
+                if (department_idInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the department this role!");
+                    return false;
+                }
+            }
         }
     ])
-    .then( ({roleName}) => {
-        connection.query(
-            'INSERT INTO role SET ?', [{roleName}],                    
-            ( err, res ) => {
-                if( err ) throw err;                      // abort on a failure
-                console.table( res );
-                mainMenu();
-            }
-        );
+    .then( data => {
+        createRole (data)
+        .then( console.log("Role added") )
+        .then( ()=> mainMenu() );
     })
 };
+
+//////////////////////////////////////////////////////////////////////
+// Promise function to perform the addition to the database
+function createRole(data) {
+
+    console.log(data);
+
+    return connection.promise().query( 'INSERT INTO role SET title = ? salary = ? department_id = ?', 
+                                       [data.title, data.salary, data.department_id] ,
+        (err, res) => {
+            if (err) throw err;                      // abort on a failure
+            console.table(res);
+            mainMenu();
+        });
+};
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -201,21 +246,78 @@ function addEmployee() {
     console.log('Adding a new employee');
     inquirer.prompt( [
         {
-            name: "deptName:",
-            message: "What is the new employee name?",
-            type: "input"
+            name: "first_name",
+            message: "What is the new employee's first name?",
+            type: "input",
+            validate: first_nameInput => {
+                if (first_nameInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the first name!");
+                    return false;
+                }
+            }
+        },
+        {
+            name: "last_name",
+            message: "What is the new employee's last name?",
+            type: "input",
+            validate: last_nameInput => {
+                if (last_nameInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the last name!");
+                    return false;
+                }
+            }
+        },
+        {
+            name: "role_id",
+            message: "What is the new employee's roll_id?",
+            type: "input",
+            validate: role_idInput => {
+                if (role_idInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the employee's role_id!");
+                    return false;
+                }
+            }
+        },
+        {
+            name: "manager_id",
+            message: "What is the new employee's manager_id?",
+            type: "input",
+            validate: manager_idInput => {
+                if (manager_idInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the employee's manager_id!");
+                    return false;
+                }
+            }
         }
     ])
-    .then( ({deptName}) => {
-        connection.query(
-            'INSERT INTO employee SET ?', [{deptName}],                    
-            ( err, res ) => {
-                if( err ) throw err;                      // abort on a failure
-                console.table( res );
-                mainMenu();
-            }
-        );
-    })
+    .then( data => {
+        createEmployee (data)
+        .then( console.log("Employee added") )
+        .then( ()=> mainMenu() );
+    });
+};
+//////////////////////////////////////////////////////////////////////
+// Promise function to perform the addition to the database
+function createEmployee(data) {
+
+    console.log(data);
+    return connection.promise().query(
+        'INSERT INTO role SET first_name = ? last_name = ? role_id = ? manager_id = ? ', 
+                              [data.first_name, data.last_name, data.role_id, data.manager_id],
+        (err, res) => {
+            if (err) throw err;                      // abort on a failure
+               console.table(res);
+            mainMenu();
+        }
+    );
 };
 
 
@@ -226,14 +328,47 @@ function updateRole() {
     console.log('Updating an employee role');
     inquirer.prompt( [
         {
-            name: "deptName:",
-            message: "What is the employee name?",
-            type: "input"
+            name: "employee_id",
+            message: "What is the employee_id?",
+            type: "input",
+            validate: employee_idInput => {
+                if (employee_idInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the employee's ID!");
+                    return false;
+                }
+            }
+        },
+        {
+            name: "role_id",
+            message: "What is the employee's new role_id?",
+            type: "input",
+            validate: role_idInput => {
+                if (role_idInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the employee's new role_ID!");
+                    return false;
+                }
+            }
         }
     ])
-    .then( ({deptName}) => {
-        connection.query(
-            'INSERT INTO employee SET ?', [{deptName}],                    
+    .then( data => {
+        createUpdatedRole (data)
+        .then( console.log("Employee added") )
+        .then( ()=> mainMenu() );
+    });
+};
+
+//////////////////////////////////////////////////////////////////////
+// Promise function to perform the addition to the database
+function createUpdatedRole(data) {
+
+    console.log(data);
+    return connection.promise().query(
+        'UPDATE employee SET role_id = ? WHERE id = ? ', 
+                              [data.role_id, data.id],                   
             ( err, res ) => {
                 if( err ) throw err;                      // abort on a failure
                 console.table( res );
