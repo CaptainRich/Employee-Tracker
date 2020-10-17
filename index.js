@@ -178,7 +178,7 @@ function addDepartment() {
 function createDepartment( department_name ) {
 
     console.log( "Department Name: ", department_name );
-    return connection.promise().query('INSERT INTO department (department_name) SET ?', department_name,
+    return connection.promise().query('INSERT INTO department SET ?', {department_name: department_name},
     ( err, res ) => {
         if( err ) throw err;                               // abort on a failure
         console.table( res );
@@ -241,12 +241,12 @@ function addRole() {
 
 //////////////////////////////////////////////////////////////////////
 // Promise function to perform the addition to the database
-function createRole(data) {
+function createRole(data) {  
 
     console.log(data);
 
-    return connection.promise().query( 'INSERT INTO role SET title = ? salary = ? department_id = ?', 
-                                       [data.title, data.salary, data.department_id] ,
+    return connection.promise().query( 'INSERT INTO role SET ?', 
+                                       {title: data.title, salary: data.salary, department_id: data.department_id},
         (err, res) => {
             if (err) throw err;                      // abort on a failure
             console.table(res);
@@ -301,6 +301,19 @@ function addEmployee() {
             }
         },
         {
+            name: "department_id",
+            message: "What is the new employee's department_id?",
+            type: "input",
+            validate: department_idInput => {
+                if (department_idInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the employee's department_id!");
+                    return false;
+                }
+            }
+        },
+        {
             name: "manager_id",
             message: "What is the new employee's manager_id?",
             type: "input",
@@ -322,15 +335,15 @@ function addEmployee() {
 };
 //////////////////////////////////////////////////////////////////////
 // Promise function to perform the addition to the database
-function createEmployee(data) {
+function createEmployee(data) {  
 
     console.log(data);
     return connection.promise().query(
-        'INSERT INTO role SET first_name = ? last_name = ? role_id = ? manager_id = ? ', 
-                              [data.first_name, data.last_name, data.role_id, data.manager_id],
+        'INSERT INTO employee SET ?', 
+                              {first_name: data.first_name, last_name: data.last_name, role_id: data.role_id, manager_id: data.manager_id, department_id: data.department_id},
         (err, res) => {
             if (err) throw err;                      // abort on a failure
-               console.table(res);
+            console.table(res);
         }
     );
 };
@@ -343,7 +356,7 @@ function updateRole() {
     console.log('Updating an employee role');
     inquirer.prompt( [
         {
-            name: "employee_id",
+            name: "id",
             message: "What is the employee_id?",
             type: "input",
             validate: employee_idInput => {
@@ -371,19 +384,19 @@ function updateRole() {
     ])
     .then( data => {
         createUpdatedRole (data)
-        .then( console.log("Employee added") )
+        .then( console.log("Employee modified") )
         .then( ()=> mainMenu() );
     });
 };
 
 //////////////////////////////////////////////////////////////////////
 // Promise function to perform the addition to the database
-function createUpdatedRole(data) {
+function createUpdatedRole(data) {   //{title: data.title, salary: data.salary, department_id: data.department_id},
 
     console.log(data);
     return connection.promise().query(
         'UPDATE employee SET role_id = ? WHERE id = ? ', 
-                              [data.role_id, data.id],                   
+                              [data.role_id,  data.id],                   
             ( err, res ) => {
                 if( err ) throw err;                      // abort on a failure
                 console.table( res );
