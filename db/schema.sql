@@ -11,6 +11,7 @@ CREATE TABLE employee (
   last_name VARCHAR(30) NOT NULL,
   role_id INTEGER(11) UNSIGNED NOT NULL,
   manager_id INTEGER(11) UNSIGNED,
+  department_id INTEGER(11) UNSIGNED,
   PRIMARY KEY (id) 
 );
 
@@ -26,6 +27,6 @@ CREATE TABLE role (
 /* Define the departments employees can belong to */
 CREATE TABLE department (
   id INTEGER(11) AUTO_INCREMENT NOT NULL,
-  name VARCHAR(30) NOT NULL,
+  department_name VARCHAR(30) NOT NULL,
   PRIMARY KEY (id) 
 );

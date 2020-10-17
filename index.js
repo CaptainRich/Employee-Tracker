@@ -126,8 +126,21 @@ function getEmployees() {
 
     console.log('Here are all the employees');
 
+    // This shows the employee table:  'SELECT * FROM employee'
+
+    // This works
+    //'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, employee.manager_id FROM employee INNER JOIN role ON employee.id=role.id'
+
+    // This works
+    //'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, department.department_name, employee.manager_id FROM employee INNER JOIN  department ON employee.department_id=department.id'
+
+    // This works
+    //'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, employee.manager_id FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id', 
+
+
     connection.query(
-        'SELECT * FROM employee', ( err, res ) => {
+        'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, employee.manager_id FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id', 
+        ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );
             mainMenu();
