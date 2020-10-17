@@ -126,7 +126,8 @@ function getEmployees() {
 
     console.log('Here are all the employees');
 
-    // This shows the employee table:  'SELECT * FROM employee'
+    // This shows the employee table:  
+    connection.query( 'SELECT * FROM employee',
 
     // This works
     //'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, employee.manager_id FROM employee INNER JOIN role ON employee.id=role.id'
@@ -138,8 +139,8 @@ function getEmployees() {
     //'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, employee.manager_id FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id', 
 
 
-    connection.query(
-        'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, managers.manager_name FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id INNER JOIN managers ON employee.manager_id=managers.id', 
+    // connection.query(
+    //     'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, managers.manager_name FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id INNER JOIN managers ON employee.manager_id=managers.id', 
         ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );
@@ -338,8 +339,7 @@ function addEmployee() {
 function createEmployee(data) {  
 
     console.log(data);
-    return connection.promise().query(
-        'INSERT INTO employee SET ?', 
+    return connection.promise().query( 'INSERT INTO employee SET ?', 
                               {first_name: data.first_name, last_name: data.last_name, role_id: data.role_id, manager_id: data.manager_id, department_id: data.department_id},
         (err, res) => {
             if (err) throw err;                      // abort on a failure
