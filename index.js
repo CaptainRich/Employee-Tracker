@@ -21,7 +21,7 @@ connection.connect( function(err) {
 
     // Report the connection status and invoke the Main Menu to allow actions on the database.
     console.log( "Connected to MySQL database with ID: " + connection.threadId + "\n" );
-    //connection.setMaxListeners(100);
+
     mainMenu();
 });
 
@@ -41,8 +41,7 @@ function mainMenu()  {
     ])
         .then( response  => {
             // Get the selected action
-            //const selection = action.split(': ');
-            //const selected = parseInt(selection[0].trim());
+
             console.log('\nSelected action is: ' + response.pick + '\n');
 
             switch (response.pick) {
@@ -90,7 +89,7 @@ function mainMenu()  {
 // Routine to obtain all of the company departments.
 function getDepartments() {
 
-    console.log('Here are all the departments');
+    console.log('Current departments');
 
     connection.query(
         'SELECT * FROM department', ( err, res ) => {
@@ -107,7 +106,7 @@ function getDepartments() {
 // Routine to obtain all of the company's employee roles.
 function getRoles() {
 
-    console.log('Here are all the employee roles');
+    console.log('Current employee roles');
 
     connection.query(
         'SELECT * FROM role', ( err, res ) => {
@@ -124,10 +123,10 @@ function getRoles() {
 // Routine to obtain all of the company's employees.
 function getEmployees() {
 
-    console.log('Here are all the employees');
+    console.log('Current employees');
 
     // This shows the employee table:  
-    connection.query( 'SELECT * FROM employee',
+    //connection.query( 'SELECT * FROM employee',
 
     // This works
     //'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, employee.manager_id FROM employee INNER JOIN role ON employee.id=role.id'
@@ -139,8 +138,8 @@ function getEmployees() {
     //'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, employee.manager_id FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id', 
 
 
-    // connection.query(
-    //     'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, managers.manager_name FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id INNER JOIN managers ON employee.manager_id=managers.id', 
+    connection.query(
+    'SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title, role.salary, department.department_name, managers.manager_name FROM employee INNER JOIN role ON employee.id=role.id INNER JOIN department ON employee.department_id=department.id INNER JOIN managers ON employee.manager_id=managers.id', 
         ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );
@@ -157,7 +156,7 @@ function getEmployees() {
 
 function addDepartment() {
 
-    console.log('Adding a new department');
+    //console.log('Adding a new department');
     inquirer.prompt( [
         {
             name: "name",
@@ -166,7 +165,7 @@ function addDepartment() {
         }
     ])
     .then( response => {
-        console.log( response );
+        //console.log( response );
         let department_name = response.name;
         createDepartment (department_name)
         .then( console.log("Department added") )
@@ -178,7 +177,7 @@ function addDepartment() {
 // Promise function to perform the addition to the database
 function createDepartment( department_name ) {
 
-    console.log( "Department Name: ", department_name );
+    //console.log( "Department Name: ", department_name );
     return connection.promise().query('INSERT INTO department SET ?', {department_name: department_name},
     ( err, res ) => {
         if( err ) throw err;                               // abort on a failure
@@ -244,7 +243,7 @@ function addRole() {
 // Promise function to perform the addition to the database
 function createRole(data) {  
 
-    console.log(data);
+    //console.log(data);
 
     return connection.promise().query( 'INSERT INTO role SET ?', 
                                        {title: data.title, salary: data.salary, department_id: data.department_id},
@@ -338,7 +337,7 @@ function addEmployee() {
 // Promise function to perform the addition to the database
 function createEmployee(data) {  
 
-    console.log(data);
+    //console.log(data);
     return connection.promise().query( 'INSERT INTO employee SET ?', 
                               {first_name: data.first_name, last_name: data.last_name, role_id: data.role_id, manager_id: data.manager_id, department_id: data.department_id},
         (err, res) => {
@@ -391,9 +390,9 @@ function updateRole() {
 
 //////////////////////////////////////////////////////////////////////
 // Promise function to perform the addition to the database
-function createUpdatedRole(data) {   //{title: data.title, salary: data.salary, department_id: data.department_id},
+function createUpdatedRole(data) {   
 
-    console.log(data);
+    //console.log(data);
     return connection.promise().query(
         'UPDATE employee SET role_id = ? WHERE id = ? ', 
                               [data.role_id,  data.id],                   
