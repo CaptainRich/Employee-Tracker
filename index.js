@@ -5,11 +5,6 @@ const inquirer    = require( 'inquirer' );
 const mysql       = require( 'mysql2' );
 
 
-// Import the 'api' routes for this application from our subdirectories
-//const { getRoles, getDepartments, getEmployees, addDepartment, addRole, addEmployee, updateRole } = 
-//      require('./routes/apiRoutes/index');
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Setup the connection to the database, and if successful invoke the Main Menu.
 
@@ -26,7 +21,7 @@ connection.connect( function(err) {
 
     // Report the connection status and invoke the Main Menu to allow actions on the database.
     console.log( "Connected to MySQL database with ID: " + connection.threadId + "\n" );
-    connection.setMaxListeners(100);
+    //connection.setMaxListeners(100);
     mainMenu();
 });
 
@@ -145,27 +140,33 @@ function getEmployees() {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to add a enw company department.
+
 function addDepartment() {
 
     console.log('Adding a new department');
     inquirer.prompt( [
         {
-            name: "deptName:",
+            name: "name",
             message: "What is the new department name?",
             type: "input"
         }
     ])
-    .then( ({deptName}) => {
-        connection.query(
-            'INSERT INTO department SET ?', [{deptName}],                    
-            ( err, res ) => {
-                if( err ) throw err;                      // abort on a failure
-                console.table( res );
-                mainMenu();
-            }
-        );
+    .then( response => {
+        console.log( response );
+        let name = response;
+        createDepartment (name)
+        .then( console.log("department added") )
+        .then( ()=> mainMenu() );
+
     })
 };
+//////////////////////////////////////////////////////////////////////
+// Promise function to perform the addition to the database
+function createDepartment( department) {
+
+    
+    return connection.promise().query('INSERT INTO department SET ?', department );
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
