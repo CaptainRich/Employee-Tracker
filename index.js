@@ -166,8 +166,8 @@ function addDepartment() {
     ])
     .then( response => {
         console.log( response );
-        let name = response;
-        createDepartment (name)
+        let department_name = response.name;
+        createDepartment (department_name)
         .then( console.log("Department added") )
         .then( ()=> mainMenu() );
 
@@ -175,10 +175,14 @@ function addDepartment() {
 };
 //////////////////////////////////////////////////////////////////////
 // Promise function to perform the addition to the database
-function createDepartment( department) {
+function createDepartment( department_name ) {
 
-    
-    return connection.promise().query('INSERT INTO department SET ?', department );
+    console.log( "Department Name: ", department_name );
+    return connection.promise().query('INSERT INTO department (department_name) SET ?', department_name,
+    ( err, res ) => {
+        if( err ) throw err;                               // abort on a failure
+        console.table( res );
+    } );
 }
 
 
@@ -246,7 +250,6 @@ function createRole(data) {
         (err, res) => {
             if (err) throw err;                      // abort on a failure
             console.table(res);
-            mainMenu();
         });
 };
 
@@ -328,7 +331,6 @@ function createEmployee(data) {
         (err, res) => {
             if (err) throw err;                      // abort on a failure
                console.table(res);
-            mainMenu();
         }
     );
 };
@@ -385,8 +387,7 @@ function createUpdatedRole(data) {
             ( err, res ) => {
                 if( err ) throw err;                      // abort on a failure
                 console.table( res );
-                mainMenu();
-            }
+             }
     );
     
 };
