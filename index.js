@@ -374,6 +374,6 @@ function createUpdatedRole(data) {
                 console.table( res );
                 mainMenu();
             }
-        );
-    })
+    );
+    
 };

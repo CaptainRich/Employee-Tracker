@@ -38,6 +38,11 @@ Given a command-line application that accepts user input
 * The NPM package mysql2.
 
 ## Note-Taker Logic
+As the application starts (from the command line) a connection to a MySQL database is setup.  This connection is used in all subsequent access to the 'staff_db' database.
+
+The application then presents the user with a menu of possible actions (as discussed in 'acceptance criteria #1' above).  This menu is redisplayed after each action selected by the user.  Each action invokes its own function to perform its task, sometimes requesting additional information from the user.
+
+In setting up the environment for this application, MySQL is started from the command line and then the 'schema' and 'seeds' files are used to define data for the initial database.
 
 
 ## Application Screen Shot
