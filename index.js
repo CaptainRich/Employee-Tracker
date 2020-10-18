@@ -351,35 +351,63 @@ function createEmployee(data) {
 // Routine to update an employee role.
 function updateRole() {
 
-    console.log('Updating an employee role');
-    inquirer.prompt( [
-        {
-            name: "id",
-            message: "What is the employee_id?",
-            type: "input",
-            validate: employee_idInput => {
-                if (employee_idInput) {
-                    return true;
-                } else {
-                    console.log("Please enter the employee's ID!");
-                    return false;
-                }
-            }
-        },
-        {
-            name: "role_id",
-            message: "What is the employee's new role_id?",
-            type: "input",
-            validate: role_idInput => {
-                if (role_idInput) {
-                    return true;
-                } else {
-                    console.log("Please enter the employee's new role_ID!");
-                    return false;
-                }
-            }
+    // Get a list of the current roles for display and selection
+    var roles = [];
+
+    connection.query(
+        'SELECT title FROM role', ( err, res ) => {
+            if( err ) throw err;                               // abort on a failure
+            console.log( res );
+            roles = res;
+            return;
         }
-    ])
+    );
+    console.log( roles );
+
+    var people = [];
+
+    connection.query(
+            'SELECT first_name last_name FROM employee', ( err, res ) => {
+                if( err ) throw err;                               // abort on a failure
+                console.log( res );
+                people = res;
+                return;
+        }
+    );
+    console.log( people );
+
+
+    console.log('Updating an employee role');
+
+    connection.query(
+        'SELECT first_name last_name FROM employee', ( err, res ) => {
+            if( err ) throw err;                               // abort on a failure
+            return people;
+        }
+    )
+        .then((people) => {
+            inquirer.prompt([
+                {
+                    name: "id",
+                    message: "What is the employee to update?",
+                    choice: people,
+                }]);
+        })
+
+        // {
+        //     name: "role_id",
+        //     message: "What is the employee's new role_id?",
+        //     type: "input",
+        //     validate: role_idInput => {
+        //         if (role_idInput) {
+        //             return true;
+        //         } else {
+        //             console.log("Please enter the employee's new role_ID!");
+        //             return false;
+        //         }
+        //     }
+        // }
+    //])
     .then( data => {
         createUpdatedRole (data)
         .then( console.log("Employee modified") )
