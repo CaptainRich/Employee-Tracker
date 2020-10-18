@@ -36,8 +36,9 @@ Given a command-line application that accepts user input
 ## Technologies Used
 * The NPM package inquirer.
 * The NPM package mysql2.
+* The NPM package console.table.
 
-## Note-Taker Logic
+## Employee Tracker Logic
 As the application starts (from the command line) a connection to a MySQL database is setup.  This connection is used in all subsequent access to the 'staff_db' database.
 
 The application then presents the user with a menu of possible actions (as discussed in 'acceptance criteria #1' above).  This menu is redisplayed after each action selected by the user.  Each action invokes its own function to perform its task, sometimes requesting additional information from the user.
