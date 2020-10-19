@@ -63,7 +63,7 @@ function mainMenu()  {
                     break;
                                                             
                 case "Add a Role":
-                    addRole( connection);
+                    addRole( connection) ;
                     break;
                                                                                 
                 case "Add an Employee":
@@ -71,7 +71,7 @@ function mainMenu()  {
                     break;
                                                                                                     
                 case "Update an Employee Role":
-                    updateRole();
+                    updateRole( connection );
                     break;
 
                 case "Finish":
@@ -349,80 +349,106 @@ function createEmployee(data) {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to update an employee role.
-function updateRole() {
+function updateRole( connection ) {
 
-    // Get a list of the current roles for display and selection
-    var roles = [];
-
-    connection.query(
-        'SELECT title FROM role', ( err, res ) => {
-            if( err ) throw err;                               // abort on a failure
-            console.log( res );
-            roles = res;
-            return;
-        }
-    );
-    console.log( roles );
-
+    // Get a list of the current roles and employees for display and selection
+    var roles  = [];
     var people = [];
-
-    connection.query(
-            'SELECT first_name last_name FROM employee', ( err, res ) => {
-                if( err ) throw err;                               // abort on a failure
-                console.log( res );
-                people = res;
-                return;
-        }
-    );
-    console.log( people );
-
-
+ 
     console.log('Updating an employee role');
 
     connection.query(
-        'SELECT first_name last_name FROM employee', ( err, res ) => {
+        'SELECT CONCAT(first_name, last_name) AS name FROM employee', ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
-            return people;
+             people = res;
+             //console.log( "People: ", people );
+             inquirer.prompt( [
+                {
+                    type: 'list',            
+                    name: "flName",
+                    message: "What is the employee name?",
+                    choices: people,
+                    validate: flNameInput => {
+                        if (flNameInput) {
+                            return true;
+                        } else {
+                            console.log("Please select the employee's name!");
+                            return false;
+                        }
+                    }
+                }
+            ])
+            .then( function (flName) {
+
+                // Find the index of the selection (need to add 1 to obtain the ID).
+                people.forEach((item, index) => {
+                     if (item.name == flName.flName) {
+                         //console.log( "Item.name, flName.flName, Index: ", item.name, flName.flName, index );
+                         id = index + 1;
+                         //console.log( "Final Index: ", id );
+                         return id;
+                     }
+                });
+                //console.log("Employee ID is: ", id);
+                return id;
+            })
+            .then( function() {
+                connection.query(
+                    'SELECT title FROM role', (err, res) => {
+                        if (err) throw err;                               // abort on a failure
+                        roles = res;
+                        console.log( "Roles:", roles );
+                        
+                        inquirer.prompt([
+                            {
+                                type: 'list',
+                                name: "roleName",
+                                message: "What is the employee's new role?",
+                                choices:  roles,
+                                validate: roleNameInput => {
+                                    if (roleNameInput) {
+                                        return true;
+                                    } else {
+                                        console.log("Please select the employee's new role!");
+                                        return false;
+                                    }
+                                }
+                            }
+                        ])
+                        .then( function (roleName) {
+
+                            // Find the index of the selection (need to add 1 to obtain the ID).
+                            roles.forEach((item, index) => {
+                                 if (item.name == roleName.roleName) {
+                                     console.log( "Item.name, roleName.roleName, Index: ", item.name, roleName.roleName, index );
+                                     role_id = index + 1;
+                                     console.log( "Final Index: ", id );
+                                     return role_id;
+                                 }
+                            });
+                            //console.log("Employee ID is: ", id);
+                            return role_id;
+                        })
+                    }
+                )
+            })
         }
     )
-        .then((people) => {
-            inquirer.prompt([
-                {
-                    name: "id",
-                    message: "What is the employee to update?",
-                    choice: people,
-                }]);
-        })
-
-        // {
-        //     name: "role_id",
-        //     message: "What is the employee's new role_id?",
-        //     type: "input",
-        //     validate: role_idInput => {
-        //         if (role_idInput) {
-        //             return true;
-        //         } else {
-        //             console.log("Please enter the employee's new role_ID!");
-        //             return false;
-        //         }
-        //     }
-        // }
-    //])
-    .then( data => {
-        createUpdatedRole (data)
-        .then( console.log("Employee modified") )
-        .then( ()=> mainMenu() );
-    });
-};
+  
+    createUpdatedRole (role_id, id)
+    .then( console.log("Employee modified") )
+    .then( ()=> mainMenu() );
+ 
+}
 
 //////////////////////////////////////////////////////////////////////
 // Promise function to perform the addition to the database
-function createUpdatedRole(data) {   
+function createUpdatedRole(role_id, id) {   
 
-    //console.log(data);
+    console.log(data);
     return connection.promise().query(
         'UPDATE employee SET role_id = ? WHERE id = ? ', 
-                              [data.role_id,  data.id],                   
+                              [role_id,  id],                   
             ( err, res ) => {
                 if( err ) throw err;                      // abort on a failure
                 console.table( res );
