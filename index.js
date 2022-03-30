@@ -1,8 +1,11 @@
 // Main controller for the Employee Tracker
 
 // Reference/import the other packages and modules needed
-const inquirer    = require( 'inquirer' );
-const mysql       = require( 'mysql2' );
+const inquirer     = require( 'inquirer' );
+const mysql        = require( 'mysql2' );
+
+const { mainMenu } = require( './utilities/menu' );
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,67 +25,10 @@ connection.connect( function(err) {
     // Report the connection status and invoke the Main Menu to allow actions on the database.
     console.log( "Connected to MySQL database with ID: " + connection.threadId + "\n" );
 
-    mainMenu();
+    mainMenu( connection );
+
 });
 
-///////////////////////////////////////////////////////////////////////////////////////
-// The Main Menu obtains the desired action.  This is recursive  since 
-// control will always return here.
-
-function mainMenu()  {
-
-    inquirer.prompt([
-        {   // Prompt the business owner for the next desired action
-            type: 'list',
-            name: 'pick',
-            message: 'Select the desired action, or Finish?',
-            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Finish']
-        }
-    ])
-        .then( response  => {
-            // Get the selected action
-
-            console.log('\nSelected action is: ' + response.pick + '\n');
-
-            switch (response.pick) {
-
-                case "View All Departments":
-                    getDepartments();
-                    break;
-
-                case "View All Roles":
-                    getRoles( connection );
-                    break;
-                    
-                case "View All Employees":
-                    getEmployees();
-                    break;
-                                        
-                case "Add a Department":
-                    addDepartment();
-                    break;
-                                                            
-                case "Add a Role":
-                    addRole( connection);
-                    break;
-                                                                                
-                case "Add an Employee":
-                    addEmployee();
-                    break;
-                                                                                                    
-                case "Update an Employee Role":
-                    updateRole();
-                    break;
-
-                case "Finish":
-                    connection.end();
-                    break;
-
-                default:
-                    mainMenu();
-            };
-        });            
-};
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -95,28 +41,12 @@ function getDepartments() {
         'SELECT * FROM department', ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );
-            mainMenu();
+            mainMenu( connection );
         }
     
     );
 };
 
-
-//////////////////////////////////////////////////////////////////////////////
-// Routine to obtain all of the company's employee roles.
-function getRoles( connection ) {
-
-    console.log('Current employee roles');
-
-    connection.query(
-        'SELECT * FROM role', ( err, res ) => {
-            if( err ) throw err;                               // abort on a failure
-            console.table( res );
-            mainMenu();
-        }
-    
-    );
-};
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -143,7 +73,7 @@ function getEmployees() {
         ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );
-            mainMenu();
+            mainMenu( connection );
         }
     
     );
@@ -169,7 +99,7 @@ function addDepartment() {
         let department_name = response.name;
         createDepartment (department_name)
         .then( console.log("Department added") )
-        .then( ()=> mainMenu() );
+        .then( ()=> mainMenu( connection ) );
 
     })
 };
@@ -187,72 +117,8 @@ function createDepartment( department_name ) {
 
 
 
-//////////////////////////////////////////////////////////////////////////////
-// Routine to add a new employee role.
-function addRole( connection ) {
 
-    console.log('Adding a new role');
-    inquirer.prompt( [
-        {
-            name: "title",
-            message: "What is the new role name?",
-            type: "text",
-            validate: titleNameInput => {
-                if (titleNameInput) {
-                    return true;
-                } else {
-                    console.log("Please enter the role name!");
-                    return false;
-                }
-            }
-        },
-        {
-            name: "salary",
-            message: "What is the salary for this role?",
-            type: "text" ,
-            validate: salaryInput => {
-                if (salaryInput) {
-                    return true;
-                } else {
-                    console.log("Please enter the salary for this role!");
-                    return false;
-                }
-            }
-        },
-        {
-            name: "department_id",
-            message: "What is the department role?",
-            type: "text" ,
-            validate: department_idInput => {
-                if (department_idInput) {
-                    return true;
-                } else {
-                    console.log("Please enter the department this role!");
-                    return false;
-                }
-            }
-        }
-    ])
-    .then( data => {
-        createRole (data, connection)
-        .then( console.log("Role added") )
-        .then( ()=> mainMenu() );
-    })
-};
 
-//////////////////////////////////////////////////////////////////////
-// Promise function to perform the addition to the database
-function createRole(data, connection) {  
-
-    //console.log(data);
-
-    return connection.promise().query( 'INSERT INTO role SET ?', 
-                                       {title: data.title, salary: data.salary, department_id: data.department_id},
-        (err, res) => {
-            if (err) throw err;                      // abort on a failure
-            console.table(res);
-        });
-};
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to add a new employee.
@@ -329,7 +195,7 @@ function addEmployee() {
     .then( data => {
         createEmployee (data)
         .then( console.log("Employee added") )
-        .then( ()=> mainMenu() );
+        .then( ()=> mainMenu( connection ) );
     });
 };
 //////////////////////////////////////////////////////////////////////
@@ -347,58 +213,3 @@ function createEmployee(data) {
 };
 
 
-//////////////////////////////////////////////////////////////////////////////
-// Routine to update an employee role.
-function updateRole() {
-
-    console.log('Updating an employee role');
-    inquirer.prompt( [
-        {
-            name: "id",
-            message: "What is the employee_id?",
-            type: "input",
-            validate: employee_idInput => {
-                if (employee_idInput) {
-                    return true;
-                } else {
-                    console.log("Please enter the employee's ID!");
-                    return false;
-                }
-            }
-        },
-        {
-            name: "role_id",
-            message: "What is the employee's new role_id?",
-            type: "input",
-            validate: role_idInput => {
-                if (role_idInput) {
-                    return true;
-                } else {
-                    console.log("Please enter the employee's new role_ID!");
-                    return false;
-                }
-            }
-        }
-    ])
-    .then( data => {
-        createUpdatedRole (data)
-        .then( console.log("Employee modified") )
-        .then( ()=> mainMenu() );
-    });
-};
-
-//////////////////////////////////////////////////////////////////////
-// Promise function to perform the addition to the database
-function createUpdatedRole(data) {   
-
-    //console.log(data);
-    return connection.promise().query(
-        'UPDATE employee SET role_id = ? WHERE id = ? ', 
-                              [data.role_id,  data.id],                   
-            ( err, res ) => {
-                if( err ) throw err;                      // abort on a failure
-                console.table( res );
-             }
-    );
-    
-};
