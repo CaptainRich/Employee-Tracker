@@ -1,6 +1,6 @@
 # Employee-Tracker
 
-Richard Ay, October 2020
+Richard Ay, October 2020 *(Updated March 2022)*
 
 ## Table of Contents
 * [Project Objective](#project-objective)
@@ -39,7 +39,7 @@ Given a command-line application that accepts user input
 * The NPM package console.table.
 
 ## Employee Tracker Logic
-As the application starts (from the command line) a connection to a MySQL database is setup.  This connection is used in all subsequent access to the 'staff_db' database.
+As the application starts (from the command line with 'node index') a connection to a MySQL database is setup.  This connection is used in all subsequent access to the 'staff_db' database.
 
 The application then presents the user with a menu of possible actions (as discussed in 'acceptance criteria #1' above).  This menu is redisplayed after each action selected by the user.  Each action invokes its own function to perform its task, sometimes requesting additional information from the user.
 

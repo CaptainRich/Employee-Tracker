@@ -152,7 +152,7 @@ function getEmployees() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-// Routine to add a enw company department.
+// Routine to add a new company department.
 
 function addDepartment() {
 
