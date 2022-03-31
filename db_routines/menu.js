@@ -1,8 +1,10 @@
 /////////////////////////////////////////////////////////////////////
 // Import the necessary node modules
 
-const inquirer              = require( 'inquirer' );
+const inquirer                          = require( 'inquirer' );
 const { getRoles, addRole, updateRole } = require('./roles');
+const { getDepartments, addDepartment } = require('./departments');
+const { getEmployees, addEmployee }     = require('./employees');
 
 
 //////////////////////////////////////////////////////////////////////
@@ -13,7 +15,7 @@ const { getRoles, addRole, updateRole } = require('./roles');
 
 function mainMenu( connection )  {
 
-    var iexit = 1;
+    var lexit = true;
 
     inquirer.prompt([
         {   // Prompt the business owner for the next desired action
@@ -31,7 +33,7 @@ function mainMenu( connection )  {
             switch (response.pick) {
 
                 case "View All Departments":
-                    getDepartments();
+                    getDepartments( connection );
                     break;
 
                 case "View All Roles":
@@ -39,11 +41,11 @@ function mainMenu( connection )  {
                     break;
                     
                 case "View All Employees":
-                    getEmployees();
+                    getEmployees( connection );
                     break;
                                         
                 case "Add a Department":
-                    addDepartment();
+                    addDepartment( connection );
                     break;
                                                             
                 case "Add a Role":
@@ -51,24 +53,24 @@ function mainMenu( connection )  {
                     break;
                                                                                 
                 case "Add an Employee":
-                    addEmployee();
+                    addEmployee( connection );
                     break;
                                                                                                     
                 case "Update an Employee Role":
-                    updateRole();
+                    updateRole( connection );
                     break;
 
                 case "Finish":
                     connection.end();
-                    iexit = 0;
+                    lexit = false;
                     break;
 
                 default:
-                    //mainMenu( connection);
+                    break;
             };
             // Set the time delay here so the results of the database query are displayed
             // before the menu is put back up. 1 second seems to be enough.
-            if( iexit ) {
+            if( lexit ) {
                 setTimeout( () => {mainMenu( connection )}, 1000);
             }
         });            

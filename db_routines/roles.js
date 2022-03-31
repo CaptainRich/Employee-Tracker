@@ -91,7 +91,7 @@ function createRole(data, connection) {
 
 //////////////////////////////////////////////////////////////////////////////
 // Routine to update an employee role.
-function updateRole() {
+function updateRole( connection ) {
 
     console.log('Updating an employee role');
     inquirer.prompt( [
@@ -123,14 +123,14 @@ function updateRole() {
         }
     ])
     .then( data => {
-        createUpdatedRole (data)
+        createUpdatedRole ( connection, data )
         .then( console.log("Employee modified") );
     });
 };
 
 //////////////////////////////////////////////////////////////////////
 // Promise function to perform the addition to the database
-function createUpdatedRole(data) {   
+function createUpdatedRole( connection, data ) {   
 
     //console.log(data);
     return connection.promise().query(
@@ -143,6 +143,7 @@ function createUpdatedRole(data) {
     );
     
 };
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Export the functions used by the main menu routine.
 
