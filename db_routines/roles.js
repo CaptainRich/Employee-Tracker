@@ -13,7 +13,7 @@ function getRoles( connection ) {
     //console.log( mainMenu );
 
     connection.query(
-        'SELECT * FROM role', (err, res) => {
+        'SELECT role.id, role.title, role.salary, department_id, department.department_name FROM role INNER JOIN department ON role.department_id=department.id', (err, res) => {
             if (err) throw err;                               // abort on a failure
             console.table(res);
         }
