@@ -71,7 +71,7 @@ function mainMenu( connection )  {
             // Set the time delay here so the results of the database query are displayed
             // before the menu is put back up. 1 second seems to be enough.
             if( lexit ) {
-                setTimeout( () => {mainMenu( connection )}, 1000);
+                setTimeout( () => {mainMenu( connection )}, 5000);
             }
         });            
 }

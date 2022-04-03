@@ -1,5 +1,6 @@
 // Import necessary components
-const inquirer      = require( 'inquirer' );
+const inquirer       = require( 'inquirer' );
+const { bufferMenu } = require( './bufferMenu' );
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Functions associated with department activities.
@@ -15,7 +16,6 @@ function getDepartments( connection ) {
         'SELECT * FROM department', ( err, res ) => {
             if( err ) throw err;                               // abort on a failure
             console.table( res );
-            //mainMenu( connection );
         }
     
     );
@@ -27,21 +27,28 @@ function getDepartments( connection ) {
 function addDepartment( connection ) {
 
     //console.log('Adding a new department');
-    inquirer.prompt( [
+    inquirer.prompt([
         {
             name: "name",
             message: "What is the new department name?",
-            type: "input"
+            type: "input",
+            validate: nameInput => {
+                if( !nameInput ) {
+              console.log( "Please enter a department name, it is required!" );
+                    return false;
+                }                
+            }
         }
     ])
-    .then( response => {
-        //console.log( response );
-        let department_name = response.name;
-        createDepartment ( connection, department_name )
-        .then( console.log("Department added") )
-        .then( ()=> mainMenu( connection ) );
-
-    })
+        .then(response => {
+            console.log( response );
+            let department_name = response.name;
+            if (department_name != "") {
+                createDepartment(connection, department_name)
+                    .then(console.log("Department added"))
+                    .then( ()=> bufferMenu( connection ) );
+            }
+        })
 };
 
 //////////////////////////////////////////////////////////////////////
